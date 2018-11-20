@@ -18,10 +18,18 @@ import rpca
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+PLOT_TYPE = ['X-component velocity', 'Y-component velocity', 'Velocity magnitude', ' Vorticity']
 
 server = app.server
 
 app.layout = html.Div([
+
+
+html.Div([
+    html.H2('PIView', id='title'),
+    html.Img(src="http://www.arianamendible.com/images/bitmap.png")#bitmap.png
+], className="banner", style={'backgroundColor':'darkslategray'}),
+
     html.H2('Hello World'),
     dcc.Dropdown(
         id='dropdown',
