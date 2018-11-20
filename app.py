@@ -183,6 +183,37 @@ def run_rpca(n_clicks, filename, slider_value):
     return None
 
 
+# make output if there is no data loaded upon plot click
+#this doesn't work right now, not executing upon click, just always
+@app.callback(Output('plot-output-container-button', 'children'),
+              [Input('plot-button', 'n_clicks')],
+              [State('upload-data', 'filename')])
+def plot_check(_, filename):
+    '''
+    This function prompts the user to select a data file before plotting
+    '''
+    if filename is None:
+        return 'First select the data to plot.'
+    return None
+
+
+@app.callback(Output('video-output-container-button', 'children'),
+              [Input('save-video-button', 'n_clicks')],
+              [State('video-filename', 'value'),
+               State('vid-file-type', 'value')])
+def save_video(_, filename, filetype):
+    '''
+    This function saves the videos of the full, low rank or sparse data.
+    '''
+    ## replace this code with a video saving function
+    if filename is not None and filetype is not None:
+        my_dict = {'test':1}
+        io.savemat(file_name='{}{}'.format(filename, filetype), mdict=my_dict)
+        return 'The video {}{} has been saved.'.format(filename, filetype)
+    return None
+
+
+
 # plotting stuff
 @app.callback(Output('full-data-plot', 'figure'),
               [Input('plot-button', 'n_clicks')],
