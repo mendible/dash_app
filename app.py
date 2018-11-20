@@ -27,7 +27,7 @@ app.layout = html.Div([
 
 html.Div([
     html.H2('PIView', id='title'),
-    html.Img(src="http://www.arianamendible.com/images/bitmap.png",height='120px'})#bitmap.png
+    html.Img(src="http://www.arianamendible.com/images/bitmap.png", style={'height':120}})#bitmap.png
 ], className="banner", style={'backgroundColor':'darkslategray'}),
 
             html.Div([
