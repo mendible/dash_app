@@ -22,13 +22,46 @@ PLOT_TYPE = ['X-component velocity', 'Y-component velocity', 'Velocity magnitude
 
 server = app.server
 
+
 app.layout = html.Div([
 
+    # html.Div([
+    #     html.Img(src=app.get_asset_url('PIView.png'),
+    #              style={'height':'100px', 'display':'inline-block', 'padding':'0px 20px'}),
+    # ]),
+    #
+    # html.Div([
+    #     html.Div('PIView', style={'font-family':'helvetica',
+    #                               'textAlign':'center', 'fontSize':'72px'}),
+    # ], style={'marginBottom':50, 'marginTop':25}),
 
-html.Div([
-    html.H2('PIView', id='title'),
-    html.Img(src="http://www.arianamendible.com/images/bitmap.png", style={'height':120}})#bitmap.png
-], className="banner", style={'backgroundColor':'darkslategray'}),
+    html.Div([
+        html.H2('PIView', id='title'),
+        html.Img(src="http://www.arianamendible.com/images/bitmap.png")#bitmap.png
+    ], className="banner", style={'backgroundColor':'darkslategray'}),
+
+
+    # header seaction
+    html.Div(className="container", children=[
+        html.Div([
+            html.Div([
+                dcc.Upload(
+                    id='upload-data',
+                    children=html.Div([
+                        'Drag and Drop or ',
+                        html.A('Select Files')
+                    ]),
+                    style={
+                        'width': '30%',
+                        'height': '60px',
+                        'lineHeight': '60px',
+                        'borderWidth': '1px',
+                        'borderStyle': 'dashed',
+                        'borderRadius': '5px',
+                        'textAlign': 'center',
+                        'margin': 'auto'
+                        }),
+            ], style={'margin':'auto', 'textAlign':'center'}),
 
             html.Div([
 
@@ -83,13 +116,39 @@ html.Div([
             'padding': '10px 5px'
         }),
 
-    html.H2('Hello World'),
-    dcc.Dropdown(
-        id='dropdown',
-        options=[{'label': i, 'value': i} for i in ['LA', 'NYC', 'MTL']],
-        value='LA'
-    ),
-    html.Div(id='display-value')
+        # graphs section
+        html.Div([
+            html.Div([
+                dcc.Graph(id='full-data-plot')
+            ], style={'width': '30%', 'display': 'inline-block', 'padding':'10 10'}),
+
+            html.Div([
+                dcc.Graph(id='low-rank-data-plot')
+            ], style={'width': '30%', 'display': 'inline-block', 'padding':'10 10'}),
+
+            html.Div([
+                dcc.Graph(id='sparse-data-plot')
+            ], style={'width': '30%', 'display': 'inline-block', 'padding':'10 10'}),
+        ], style={'textAlign': 'center'}),
+
+        # save movie button
+        html.Div([
+            dcc.Input(id='video-filename', type='text',
+                      placeholder='Video file name', debounce=True),
+            dcc.RadioItems(id='vid-file-type',
+                           options=[{'label': ' .mp4 ', 'value': '.mp4'},
+                                    {'label': ' .avi ', 'value': '.avi'},
+                                    {'label': ' .gif ', 'value': '.gif'}
+                                   ],
+                           labelStyle={'display': 'inline-block'}),
+            html.Button('Save Video', id='save-video-button'),
+        ], style={'width':'30%', 'display':'inline-block', 'margin-bottom':30, 'margin-left':50}),
+
+        html.Div(id='output-video-button', style={'margin-top':20, 'display':'inline-block'}),
+
+        html.Div(id='video-output-container-button',
+                 style={'margin-top':20, 'display':'inline-block'}),
+    ]),
 ])
 
 @app.callback(dash.dependencies.Output('display-value', 'children'),
