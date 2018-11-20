@@ -22,7 +22,6 @@ PLOT_TYPE = ['X-component velocity', 'Y-component velocity', 'Velocity magnitude
 
 server = app.server
 
-
 app.layout = html.Div([
 
     # html.Div([
@@ -34,6 +33,13 @@ app.layout = html.Div([
     #     html.Div('PIView', style={'font-family':'helvetica',
     #                               'textAlign':'center', 'fontSize':'72px'}),
     # ], style={'marginBottom':50, 'marginTop':25}),
+    html.H2('Hello World'),
+    dcc.Dropdown(
+        id='dropdown',
+        options=[{'label': i, 'value': i} for i in ['LA', 'NYC', 'MTL']],
+        value='LA'
+    ),
+    html.Div(id='display-value'),
 
     html.Div([
         html.H2('PIView', id='title'),
