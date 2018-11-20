@@ -135,9 +135,9 @@ app.layout = html.Div([
             dcc.Input(id='video-filename', type='text',
                       placeholder='Video file name', debounce=True),
             dcc.RadioItems(id='vid-file-type',
-                           options=[{'label': ' .mp4 ', 'value': '.mp4'},
-                                    {'label': ' .avi ', 'value': '.avi'},
-                                    {'label': ' .gif ', 'value': '.gif'}
+                           options=[{'label': '\r .mp4 \r', 'value': '.mp4'},
+                                    {'label': '\r .avi \r', 'value': '.avi'},
+                                    {'label': '\r .gif \r', 'value': '.gif'}
                                    ],
                            labelStyle={'display': 'inline-block'}),
             html.Button('Save Video', id='save-video-button'),
@@ -156,8 +156,32 @@ app.layout = html.Div([
 def lambda_output(slider_value):
     'updates the lambda slider in a text box'
     return '\u03bb = {:0.2f}'.format(10**(slider_value-1))
+# button stuff
+@app.callback(Output('rpca-output-container-button', 'children'),
+              [Input('rpca-button', 'n_clicks')],
+              [State('upload-data', 'filename'),
+               State('lambda-slider', 'value')])
+def run_rpca(n_clicks, filename, slider_value):
+    '''
+    This function runs the RPCA on the loaded file and saves the data.
+    '''
+    if n_clicks is not None:
+        lambda_value = 10**(slider_value-1)
+        filename, _ = os.path.splitext(filename) # new fix for filename
+        rpca_filename = '{}_lam{:0.2f}_rpca.mat'.format(filename, lambda_value)
+        if os.path.isfile(rpca_filename):
+            return 'RPCA already run on this data with \u03bb = {:0.2f}.'.format(lambda_value)
+        mat = io.loadmat(filename, mat_dtype=True)
+        locals().update(mat) # this line converts everything in dict to a variable
+        full_data = mat['u_x']
+        lowrank_mat, sparse_mat = rpca.rpca(full_data, lambda_value)
+        color_limits = [0.5*np.min(full_data), 0.5*np.max(full_data)]
+        my_dict = {'sparse':sparse_mat, 'lowrank':lowrank_mat,
+                   'fulldata':full_data, 'color_limits':color_limits}
+        io.savemat(file_name=rpca_filename, mdict=my_dict)
+        return 'RPCA run on {} with \u03bb = {:0.2f} and saved'.format(filename, lambda_value)
+    return None
 
-    
 EXTERNAL_CSS = [
     # Normalize the CSS
     "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css",
