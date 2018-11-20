@@ -221,6 +221,80 @@ def update_graph_full(n_clicks, yaxis_column_name, slider_value, filename):
         }
     return None
 
+@app.callback(Output('low-rank-data-plot', 'figure'),
+              [Input('plot-button', 'n_clicks')],
+              [State('crossfilter-yaxis-column', 'value'),
+               State('lambda-slider', 'value'),
+               State('upload-data', 'filename')])
+def update_graph_lowrank(n_clicks, yaxis_column_name, slider_value, filename):
+    '''
+    This function updates the plot of the low rank data.
+    '''
+    if n_clicks is not None:
+        lambda_value = 10**(slider_value-1)
+        filename, _ = os.path.splitext(filename) # new fix for filename
+        rpca_filename = '{}_lam{:0.2f}_rpca.mat'.format(filename, lambda_value)
+        if os.path.isfile(rpca_filename):
+            mat = io.loadmat(rpca_filename, mat_dtype=True)
+            lowrank = mat['lowrank']
+            color_limits = mat['color_limits']
+            plot_z = lowrank[:, :, 1]
+        else: plot_z = 1
+        return {
+            'data': [go.Heatmap(
+                z=plot_z,
+                zmin=color_limits[0][0],
+                zmax=color_limits[0][1],
+                showscale=False
+            )],
+            'layout': go.Layout(
+                xaxis={'showticklabels':False, 'ticks':''},
+                yaxis={'showticklabels':False, 'ticks':''},
+                title='Low Rank Data: ' + str(yaxis_column_name),
+                margin={'l':40, 'b':40, 't':40, 'r':40},
+                height=450,
+                #hovermode='closest'
+            )
+        }
+    return None
+@app.callback(Output('sparse-data-plot', 'figure'),
+              [Input('plot-button', 'n_clicks')],
+              [State('crossfilter-yaxis-column', 'value'),
+               State('lambda-slider', 'value'),
+               State('upload-data', 'filename')])
+def update_graph_sparse(n_clicks, yaxis_column_name, slider_value, filename):
+    '''
+    This function updates the plot of the sparse data.
+    '''
+    if n_clicks is not None:
+        lambda_value = 10**(slider_value-1)
+        filename, _ = os.path.splitext(filename) # new fix for filename
+        rpca_filename = '{}_lam{:0.2f}_rpca.mat'.format(filename, lambda_value)
+        if os.path.isfile(rpca_filename):
+            mat = io.loadmat(rpca_filename, mat_dtype=True)
+            color_limits = mat['color_limits']
+            sparse_data = mat['sparse']
+            plot_z = sparse_data[:, :, 1]
+        else: plot_z = 1
+        return {
+            'data': [go.Heatmap(
+                z=plot_z,
+                zmin=color_limits[0][0],
+                zmax=color_limits[0][1],
+                showscale=False
+            )],
+            'layout': go.Layout(
+                xaxis={'showticklabels':False, 'ticks':''},
+                yaxis={'showticklabels':False, 'ticks':''},
+                title='Sparse Data: '+str(yaxis_column_name),
+                margin={'l': 40, 'b': 40, 't': 40, 'r': 40},
+                height=450,
+                #hovermode='closest'
+            )
+        }
+    return None
+
+
 EXTERNAL_CSS = [
     # Normalize the CSS
     "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css",
