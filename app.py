@@ -33,13 +33,6 @@ app.layout = html.Div([
     #     html.Div('PIView', style={'font-family':'helvetica',
     #                               'textAlign':'center', 'fontSize':'72px'}),
     # ], style={'marginBottom':50, 'marginTop':25}),
-    html.H2('Hello World'),
-    dcc.Dropdown(
-        id='dropdown',
-        options=[{'label': i, 'value': i} for i in ['LA', 'NYC', 'MTL']],
-        value='LA'
-    ),
-    html.Div(id='display-value'),
 
     html.Div([
         html.H2('PIView', id='title'),
@@ -157,10 +150,14 @@ app.layout = html.Div([
     ]),
 ])
 
-@app.callback(dash.dependencies.Output('display-value', 'children'),
-              [dash.dependencies.Input('dropdown', 'value')])
-def display_value(value):
-    return 'You have selected "{}"'.format(value)
+# lambda slider
+@app.callback(Output('lambda-slider-output', 'children'),
+              [Input('lambda-slider', 'value')])
+def lambda_output(slider_value):
+    'updates the lambda slider in a text box'
+    return '\u03bb = {:0.2f}'.format(10**(slider_value-1))
+
+    
 EXTERNAL_CSS = [
     # Normalize the CSS
     "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css",
